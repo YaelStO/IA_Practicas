@@ -1,26 +1,36 @@
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.pipeline import make_pipeline
 
-# Datos de entrenamiento (Ejemplo: comentarios clasificados)
-textos = [
-    "Me encanta este producto, es increíble",  # Positivo
-    "Es una porquería, no lo recomiendo",  # Negativo
-    "Muy útil y funciona perfectamente",  # Positivo
-    "No sirve para nada, pésima calidad",  # Negativo
-    "Estoy muy feliz con esta compra",  # Positivo
-    "Terrible, me arrepiento de comprarlo",  # Negativo
-]
+# Definir los conceptos (nodos)
+conceptos = ["Perro", "Mamífero", "Animal", "Cuatro patas", "Ladrido"]
 
-etiquetas = ["positivo", "negativo", "positivo", "negativo", "positivo", "negativo"]
+# Crear una matriz de adyacencia (5x5) inicializada en 0
+matriz_adyacencia = np.zeros((len(conceptos), len(conceptos)), dtype=int)
 
-# Convertir texto en números con TF-IDF y entrenar el modelo
-modelo = make_pipeline(TfidfVectorizer(), MultinomialNB())
-modelo.fit(textos, etiquetas)
+# Definir las relaciones usando índices
+relaciones = {
+    ("Perro", "Mamífero"): 1,   # Perro es un Mamífero
+    ("Mamífero", "Animal"): 1,  # Mamífero es un Animal
+    ("Perro", "Cuatro patas"): 1,  # Perro tiene Cuatro patas
+    ("Perro", "Ladrido"): 1  # Perro emite Ladrido
+}
 
-# Probar el modelo con un texto nuevo
-nuevo_texto = ["Este producto es no es bueno, lo odio"]
-prediccion = modelo.predict(nuevo_texto)
+# Llenar la matriz de adyacencia
+for (concepto1, concepto2), valor in relaciones.items():
+    i, j = conceptos.index(concepto1), conceptos.index(concepto2)
+    matriz_adyacencia[i, j] = valor
 
-print(f"Predicción: {prediccion[0]}")
+# Función para mostrar relaciones de un nodo específico
+def mostrar_relaciones(concepto):
+    if concepto in conceptos:
+        index = conceptos.index(concepto)
+        relaciones = [conceptos[i] for i in range(len(conceptos)) if matriz_adyacencia[index, i] == 1]
+        print(f"Relaciones de '{concepto}': {', '.join(relaciones)}")
+    else:
+        print("Concepto no encontrado.")
+
+# Mostrar la matriz de adyacencia
+print("Matriz de Adyacencia:")
+print(matriz_adyacencia)
+
+# Mostrar relaciones de "Perro"
+mostrar_relaciones("Perro")
