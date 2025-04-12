@@ -23,6 +23,8 @@ def clasificar_animal(nuevo_animal):
     distancias = np.linalg.norm(X_train - nuevo_animal, axis=1)
     
     # Encontramos la posición del menor valor (el vecino más cercano)
+
+    
     indice_min = np.argmin(distancias)
     
     # Devolvemos la etiqueta del animal más cercano
